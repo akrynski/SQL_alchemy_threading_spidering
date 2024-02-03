@@ -207,5 +207,6 @@ J a k i ś   n a p i s
 J a k i ś   n a p i s
 J a k i ś   n a p i s
 
-
+Innym sposobem odpalania wątku jest nadpisanie metody w podklasie.
+Opisuję to w pliku spidering_basics_2.py
 """
