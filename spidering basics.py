@@ -84,9 +84,21 @@ db_password = os.environ.get("POSTGRES_PASSWORD")
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 # Tworzenie bazy danych PostgreSQL z użyciem hasła z zmiennych środowiskowych
-DATABASE_URL = "postgresql://postgres:{db_password}@localhost:5432/pierwsze_kroki"
-
-engine = create_engine(DATABASE_URL)
+DATABASE_URL = f"postgresql://postgres:{db_password}@localhost:5432/pierwsze_kroki"
+# Opcja -c client_encoding=utf8 jawnie ustawia kodowanie klienta na UTF-8
+# Możesz sprawdzić plik konfiguracyjny serwera PostgreSQL (zwykle o nazwie postgresql.conf)
+# pod kątem client_encoding = utf8
+# Upewnij się, że serwer PostgreSQL jest skonfigurowany do używania kodowania UTF-8.
+# Połącz się z bazą danych PostgreSQL za pomocą klienta takiego jak psql i uruchom następujące zapytanie SQL:
+# >>>psql -Upostgres
+# postgres=# SHOW server_encoding;
+#  server_encoding
+# -----------------
+#  UTF8
+# (1 wiersz)
+# Jeśli nadal po kompilacji są problemy ze stroną kodową użyj jawnego tekstu w stringu hasła, nie zmiennej
+# tylko pamiętaj by usunąć swoje hasło przed publikacją pliku np. na githubie;)
+engine = create_engine(DATABASE_URL, connect_args={"options": "-c client_encoding=UTF8"})
 metadata = MetaData()
 Base = declarative_base()
 
