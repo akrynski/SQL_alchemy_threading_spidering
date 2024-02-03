@@ -184,3 +184,28 @@ for t in threads:
 
 # Zamykanie sesji SQLAlchemy
 session.close()
+"""
+Dla wielowątkowości istotne w kodzie są te linie:
+    t = threading.Thread(target=worker, args=(queue,))
+    t.start()
+Klasa Thread modułu threading pobiera tu dwa parametry - target, który jest wskaźnikiem, czy też referencją 
+na dowolną procedurę/funkcję wykonującą jakieś zadanie. Taką procedurę nazywamy WORKERem.
+args to lista argumentów przekazywana do workera.
+workerem może być także funkcja systemowa, np print():
+>>> from threading import Thread
+>>> t = Thread(target=print, args=("Jakiś napis"))
+>>> t.start()
+J a k i ś   n a p i s
+Oczywiście możemy odpalić wiele wątków:
+>>> for _ in range(5):
+...     t = Thread(target=print, args=("Jakiś napis"))
+...     t.start()
+...
+J a k i ś   n a p i s
+J a k i ś   n a p i s
+J a k i ś   n a p i s
+J a k i ś   n a p i s
+J a k i ś   n a p i s
+
+
+"""
