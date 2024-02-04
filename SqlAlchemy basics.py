@@ -124,6 +124,7 @@ stmt = select(User).where(User.name.in_(["spongebob", "sandy"]))
 
 for user in session.scalars(stmt):
     print(f"{20*'>'}Users: {user}\n")
+# tu mamy SELECT JOIN na kilku tabelach:
 stmt = (
     select(Address)
     .join(Address.user)
@@ -132,3 +133,54 @@ stmt = (
 )
 sandy_address = session.scalars(stmt).one()
 print(f"{20*'>'}Sandy's address: {sandy_address}")
+
+"""
+---------------------       DOKONYWANIE ZMIAN
+Sesja w powiązaniu z mapowanymi przez ORM klasami User i Address automatycznie śledzi zmiany dokonywane na objektach
+co skutkuje instrukcjami SQL, które zostaną wyemitowane przy następnym opróżnianiu (flush) sesji.
+Poniżej zmieniamy jeden adres e-mail powiązany z "sandy", a także dodajemy nowy adres e-mail do "patrick", 
+po wyemitowaniu SELECT w celu pobrania wiersza dla "patrick":
+"""
+stmt = select(User).where(User.name == "patrick")
+patrick = session.scalars(stmt).one()
+patrick.addresses.append(Address(email_address="patrickstar@sqlalchemy.org"))
+sandy_address.email_address = "sandy_cheeks@sqlalchemy.org"
+
+session.commit()
+"""
+Informacje ogólne na temat różnych sposobów uzyskiwania dostępu do elementów używające mniej lub bardziej rozbudowanego
+SQL są omówione w https://docs.sqlalchemy.org/en/20/tutorial/orm_related_objects.html#tutorial-orm-loader-strategies
+"""
+"""
+---------------------     NIEKTÓRE FORMY OPERACJI DELETE
+Wszystko ma swój koniec, podobnie jak w przypadku niektórych wierszy naszej bazy danych - oto krótka demonstracja 
+dwóch różnych form usuwania, obu równie ważnych, w zależności od konkretnego przypadku użycia.
+Najpierw usuniemy jeden z objektów Address powiązany z użytkownikiem "sandy". 
+Po opróżnieniu sesji ten wiersz zostanie usunięty.
+Takie zachowanie wiąże się z konfiguracją naszego mapowania określonego jako delete cascade. Uchwyt do objektu sandy 
+uzyskamy przez primary key używając Session.get():
+"""
+sandy = session.get(User, 2)
+sandy.addresses.remove(sandy_address)
+"""
+druga instrukcja powyżej powoduje wygenerowanie dodatkowego SELECT ładującego tabelę adresów, 
+jest to tzw. operacja lazy load. Istnieją inne wywołania, generujące mniejszą ilość wywołań SQL.
+Instrukcja DELETE FROM address WHERE address.id = ?,(2,) generowana jest z użyciem:
+"""
+session.flush()
+"""
+W następnym kroku całkowicie usuniemy użytkownika "patrick". Użyjemy tu metody Session.delete(), która właściwie
+nie usuwa objektu ale zaznacza ten objekt do usunięcia z najbliższym opróżnieniem sesji.
+"""
+session.delete(patrick)
+"""
+Właściwa kwerenda usuwająca: 
+DELETE FROM address WHERE address.id = ?, (4,)
+DELETE FROM user_account WHERE user_account.id = ?,(3,)
+COMMIT
+generowana jest dopiero podczas:
+"""
+session.commit()
+# Usuwanie jest opisane tu: https://docs.sqlalchemy.org/en/20/tutorial/orm_data_manipulation.html#tutorial-orm-deleting
+
+
