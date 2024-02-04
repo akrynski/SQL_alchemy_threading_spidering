@@ -11,7 +11,7 @@ sqlite3: Total time for 100000 records 0.197000026703 sec
 
 C:\Users\Andrzej\Desktop\python_actual_project>
 '''
-
+import sys
 import sqlite3
 import time
 
@@ -138,6 +138,7 @@ def test_sqlite3(n=100000, dbname='sqlite3.db'):
 
 
 if __name__ == '__main__':
+
     test_sqlalchemy_orm(100000)
     test_sqlalchemy_orm_pk_given(100000)
     test_sqlalchemy_orm_bulk_save_objects(100000)

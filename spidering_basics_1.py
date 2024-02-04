@@ -58,7 +58,7 @@ czyli procedura zdejmująca dane z kolejki i przekazująca je do bazy danych, or
 będąca konstruktorem kolejki zadań (FIFO) do wykonania. Takim zadaniem czyli argumentem tej klasy jest wskażnik 
 na procedurę zbierającą dane. WORKER to funkcja, którą używasz w wielu wątkach. Każdy wątek pobiera dane z kolejki, 
 sprawdza, czy istnieją w bazie danych, a następnie dodaje nowe dane, jeśli nie istnieją. Warto zauważyć, 
-że operacje na bazie danych są otoczone transakcją za pomocą session.commit(), aby zapewnić spójność danych.
+że operacje na bazie danych są otoczone transakcją za pomocą session.commit(), co zapewnia spójność danych.
 
 Do definiowania metadanych tabeli używam formularzy deklaratywnych ORM, w uproszczeniu - korzystam z klas 
 SQLAlchemy dziedziczących od DeclarativeBase. Na jej podstawie tworzę pustą klasę Base, a z niej wywodzę wszystkie 

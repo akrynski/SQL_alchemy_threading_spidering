@@ -1,5 +1,9 @@
 # title:SqlAlchemyBasics.py
 # coding=utf-8
+'''
+Jest to kod i moje tłumaczenie  niektórych akapitów z podręcznika
+https://docs.sqlalchemy.org/en/20/orm/quickstart.html
+'''
 from typing import List
 from typing import Optional
 
