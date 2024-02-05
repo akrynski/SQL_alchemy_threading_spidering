@@ -48,6 +48,7 @@ from bs4 import BeautifulSoup
 # Add a global variable to indicate when the threads should stop
 exit_flag = False
 exit_event = threading.Event()  # Create an event object
+my_lock = threading.Lock()
 # Pobierz hasło z zmiennych środowiskowych
 db_password = os.environ.get("POSTGRES_PASSWORD")
 # Jawnie ustaw kodowanie klienta dla psycopg2 na UTF-8
@@ -119,16 +120,29 @@ a z tych tagów tagi paragrafów o niezerowej wysokości (drugi parametr tagu).
 """
 
 
-def worker1(_soup):
-    # Find all <div> tags with a specific class
-    links = _soup.find_all("div", class_="post")
-    for link in links:
-        print("Link:", link)
+def flush_queue(worker_function):
+    while not queue1.empty():
+        try:
+            worker_function(queue1.get(block=True))
+        finally:
+            queue1.task_done()
+            print(f"Flushing {worker_function.__name__}\n")
 
-    global exit_flag
-    exit_flag = True  # Set the exit flag
-    print("exit flag set - exiting worker1")
-    exit(0)
+
+def worker1(_soup):
+    # with my_lock:
+    if _soup:
+        # Find all <div> tags with a specific class
+        links = _soup.find_all("div", class_="post")
+        for link in links:
+            print("Link:", link)
+
+        global exit_flag
+        exit_flag = True  # Set the exit flag
+        print("exit flag set - exiting worker1")
+
+
+# exit(0)
 
 
 def worker2(_sesja, _link):
@@ -146,18 +160,25 @@ class Worker1Thread(threading.Thread):
         # kwargs passed by the worker are kwargs={'queue':queue1} then
         self.queue = self.kwargs['queue']
 
-
     def run(self):
         global exit_flag
         # while True:
-        while not (exit_event.is_set() or exit_flag):
+        with my_lock:
+            while not (exit_event.is_set() or exit_flag):
+                try:
+                    worker1(self.queue.get(block=True))
+                finally:
+                    self.queue.task_done()
+                    print(f"Worker1Thread done\n")
+                    # exit(0)
+                    # Flush the queue before exiting
+        while not self.queue.empty():
             try:
                 worker1(self.queue.get(block=True))
             finally:
                 self.queue.task_done()
-                print("Worker1Thread done\n")
-                exit(0)
-        print("Exiting Worker1Thread")
+                print(f"Flushing Worker1Thread\n")
+        print(f"Exiting Worker1Thread")
 
 
 class Worker2Thread(threading.Thread):
@@ -166,7 +187,6 @@ class Worker2Thread(threading.Thread):
         # (Thread.__init__()) before doing anything else to the thread:
         threading.Thread.__init__(self)
         self.queue = queue
-
 
     def run(self):
         global exit_flag
@@ -186,7 +206,7 @@ strona = "https://akrynski.pythonanywhere.com/"
 soup = getSoup(requests_session, strona)
 queue1 = Queue()
 # Create 8 worker threads
-for x in range(8):
+for x in range(8):  # ile wątków uruchomić
     worker = Worker1Thread(name="Worker1Thread", kwargs={'queue': queue1})
     # Setting daemon to True will let the main thread exit even though the workers are blocking
     worker.daemon = True
@@ -194,7 +214,7 @@ for x in range(8):
 queue1.put(soup, block=True)
 # Join causes the main thread to wait for the queue to finish processing all the tasks
 queue1.join()
-
+queue1.put(None)
 requests_session.close()
 session.close()
 # Set the exit event when you want threads to stop
@@ -204,6 +224,6 @@ exit_flag = True
 for thread in threading.enumerate():
     if thread.is_alive() and thread.name in ["Worker1Thread"]:
         thread.join()
-        print("Joined {thread.name}")
+        print(f"Joined {thread.name}")
 
-print("All worker threads have finished. Exiting.")
+print(f"All worker threads have finished. Exiting.")
