@@ -39,6 +39,7 @@ Następnie przez wpisanie specjalnej adnotacji Mapped deklarowane są kolumny ta
 Nazwa każdego atrybutu odpowiada kolumnie, która ma być częścią tabeli bazy danych. 
 Typ danych każdej kolumny jest pobierany najpierw z typu danych Pythona. 
 Dopuszczanie wartości null wynika z tego, czy lub nie jest używany modyfikator typu. 
+Parametr mapped_column.nullable może być również używany jawnie (i nie musi być zgodny z opcjonalnością adnotacji).
 Bardziej szczegółowe informacje na temat wpisywania mogą być wskazane za pomocą obiektów typu SQLAlchemy 
 po prawej stronie dyrektywy mapped_column, takich jak mapped_column(String(30) datatype użyte do stworzenia i określenia
 typu kolumny User.name poniżej czy też określenia i powiązania kluczy tabel - wszystkie klasy mapowane ORM wymagają, 
