@@ -205,4 +205,5 @@ for thread in threading.enumerate():
     if thread.is_alive() and thread.name in ["Worker1Thread"]:
         thread.join()
         print("Joined {thread.name}")
+
 print("All worker threads have finished. Exiting.")
