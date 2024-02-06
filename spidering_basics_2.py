@@ -34,7 +34,6 @@ import threading
 from queue import Queue
 
 import psycopg2
-from typing import Optional
 
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped
@@ -42,6 +41,10 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import text
+from sqlalchemy import func
+import hashlib
 
 from bs4 import BeautifulSoup
 
@@ -75,10 +78,11 @@ Base = declarative_base()
 
 
 class MyTable(Base):
-    __tablename__ = "moje_artykuły"
+    __tablename__ = "my_articles"
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(30))
-    article: Mapped[Optional[str]]
+    checksum: Mapped[str] = mapped_column(String(1024), unique=True) # dla unique=1 baza tworzy klucz
+    title: Mapped[str] = mapped_column(String(30), nullable=True)
+    article: Mapped[str] = mapped_column(String())
 
     def __repr__(self) -> str:
         return f"User(id={self.id!r}, name={self.name!r}, fullname={self.fullname!r})"
@@ -92,6 +96,21 @@ Session = sessionmaker(bind=engine)
 session = Session()
 requests_session = requests.session()
 
+"""sql_statement = text(
+    'CREATE INDEX IF NOT EXISTS checksum_idx ON my_articles USING GIN (to_tsvector(\'english\', checksum));')
+session.execute(sql_statement)"""
+
+
+# session.execute('CREATE INDEX article_full_text_idx ON moje_artykuły USING GIN (to_tsvector(\'polish\', article));')
+
+def generate_hash(content):
+    # Stwórz obiekt hashowania dla danego algorytmu (np. SHA-256)
+    hash_object = hashlib.sha256()
+    # Zaktualizuj obiekt hashowania daną treścią (string)
+    hash_object.update(content.encode('utf-8'))
+    # Pobierz sumę kontrolną (hash) jako szesnastkowy ciąg znaków
+    hash_hex = hash_object.hexdigest()
+    return hash_hex
 
 def getSoup(req_ses, my_query, timeout=None):
     """ simply outputs info queried from BeautifulSoup """
@@ -135,7 +154,29 @@ def worker1(_soup):
         # Find all <div> tags with a specific class
         links = _soup.find_all("div", class_="post")
         for link in links:
-            print("Link:", link)
+            # print({link.get('href')})
+            paragraf = link.find('p').text.strip()
+            _checksum = generate_hash(paragraf)
+            # print(paragraf, "\n")
+            # Check if paragraph text already exists in the table
+            # existing_paragraph = session.query(MyTable).filter(MyTable.article == paragraf).first()
+            # wyszukiwanie dla modelu full search index:
+            existing_paragraph = session.query(MyTable).filter(
+                func.to_tsvector('english', MyTable.checksum).match(_checksum)).all()
+            if existing_paragraph:
+                print("Paragraph already exists in the table:\n", paragraf)
+            else:
+                # Insert paragraph into the database
+                #new_paragraph = MyTable(article=paragraf)
+                #session.add(new_paragraph)
+                new_entry = MyTable(checksum=_checksum, article=paragraf)
+                session.add(new_entry)
+                try:
+                    session.commit()
+                    print("Paragraph added to the table:\n", paragraf)
+                except IntegrityError as e:
+                    session.rollback()
+                    print("Failed to add paragraph due to integrity constraint:", e, '\n', paragraf, '\n')
 
         global exit_flag
         exit_flag = True  # Set the exit flag
@@ -206,7 +247,7 @@ strona = "https://akrynski.pythonanywhere.com/"
 soup = getSoup(requests_session, strona)
 queue1 = Queue()
 # Create 8 worker threads
-for x in range(8):  # ile wątków uruchomić
+for x in range(2):  # ile wątków uruchomić
     worker = Worker1Thread(name="Worker1Thread", kwargs={'queue': queue1})
     # Setting daemon to True will let the main thread exit even though the workers are blocking
     worker.daemon = True
