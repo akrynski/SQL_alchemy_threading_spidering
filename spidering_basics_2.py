@@ -100,9 +100,6 @@ requests_session = requests.session()
     'CREATE INDEX IF NOT EXISTS checksum_idx ON my_articles USING GIN (to_tsvector(\'english\', checksum));')
 session.execute(sql_statement)"""
 
-
-# session.execute('CREATE INDEX article_full_text_idx ON moje_artykuły USING GIN (to_tsvector(\'polish\', article));')
-
 def generate_hash(content):
     # Stwórz obiekt hashowania dla danego algorytmu (np. SHA-256)
     hash_object = hashlib.sha256()
@@ -155,10 +152,12 @@ def worker1(_soup):
         links = _soup.find_all("div", class_="post")
         for link in links:
             # print({link.get('href')})
+            _title = link.find('h1').text.strip()
+            #print(title, '\n')
             paragraf = link.find('p').text.strip()
             _checksum = generate_hash(paragraf)
             # print(paragraf, "\n")
-            # Check if paragraph text already exists in the table
+            # Sprawdź czy dany artykuł paragraf) jest już w tabeli
             # existing_paragraph = session.query(MyTable).filter(MyTable.article == paragraf).first()
             # wyszukiwanie dla modelu full search index:
             existing_paragraph = session.query(MyTable).filter(
@@ -167,9 +166,7 @@ def worker1(_soup):
                 print("Paragraph already exists in the table:\n", paragraf)
             else:
                 # Insert paragraph into the database
-                #new_paragraph = MyTable(article=paragraf)
-                #session.add(new_paragraph)
-                new_entry = MyTable(checksum=_checksum, article=paragraf)
+                new_entry = MyTable(checksum=_checksum, article=paragraf, title=_title)
                 session.add(new_entry)
                 try:
                     session.commit()
@@ -183,12 +180,9 @@ def worker1(_soup):
         print("exit flag set - exiting worker1")
 
 
-# exit(0)
-
-
 def worker2(_sesja, _link):
     pass
-    exit(0)
+
 
 
 class Worker1Thread(threading.Thread):
