@@ -2,8 +2,8 @@
 title: spidering_basics_3.py
 coding=utf-8
 author: Andrzej Kryński
-
-Więcej o wyszukiwaniu informacji (IR, text-mining)
+Niektóre przykłady pochodzą z https://www.geeksforgeeks.org/create-inverted-index-for-file-using-python/
+Więcej o wyszukiwaniu informacji (IR, text-mining, web-scraping)
 '''
 
 """
@@ -98,4 +98,146 @@ https://en.wikipedia.org/wiki/PageRank
 https://patents.google.com/patent/US6285999B1/en
 http://infolab.stanford.edu/~backrub/google.html
 https://site-analyzer.pro/pl/articles/raschet-google-pagerank/
+
+>>> import stopwordsiso
+>>> stopwordsiso.has_lang("pl")
+True
+>>> from stopwordsiso import stopwords
+>>> stopwords("pl")
+{'byli', 'bo', 'jakby', 'te', 'jedynie', 'pan', 'tutaj', 'przecież', 'której', 'tu', 'można', 'my', 'xiv', 'dokąd', 
+'razie', 'wśród', 'nasi', 'wasze', 'natychmiast', 'inny', 'jakiż', 'który', 'jako', 'jestem', 'było', 'zaś', 'na', 
+'dość', 'wielu', 'totobą', 'im', 'ile', 'hab', 'prof', 'nasze', 'tylko', 'ją', 'wszystkich', 'ul', 'gdzieś', 'przedtem', 
+'ze', 'dwaj', 'są', 'oraz', 'twoja', 'ktokolwiek', 'mam', 'toteż', 'nam', 'kilku', 'ma', 'nawet', 'we', 'dwa', 'czasem', 
+'twoi', 'znowu', 'inż', 'tobie', 'ja', 'ta', 'kimś', 'ok', 'moje', 'według', 'dwoje', 'już', 'cokolwiek', 'wasz', 
+'coraz', 'właśnie', 'vi', 'ix', 'które', 'inne', 'w', 'były', 'prawie', 'pani', 'taki', 'czemu', 'od', 'co', 'pod', 
+'to', 'nigdy', 'powinien', 'mogą', 'go', 'tobą', 'by', 'za', 'o', 'xi', 'takie', 'wszyscy', 'ponieważ', 'coś', 'lat', 
+'niej', 'tych', 'ani', 'między', 'także', 'się', 'godz', 'moja', 'wtedy', 'około', 'inna', 'jeżeli', 'wiele', 'zawsze', 
+'może', 'tej', 'gdyż', 'ale', 'niemu', 'niech', 'je', 'możliwe', 'jeszcze', 'roku', 'nich', 'taka', 'będzie', 'którym', 
+'zł', 'kilka', 'acz', 'tel', 'one', 'wasi', 'albo', 'więc', 'bowiem', 'ach', 'też', 'mgr', 'sobie', 'no', 'ktoś', 
+'jeden', 'jakoś', 'twym', 'vol', 'takich', 'powinna', 'wasza', 'xii', 'czy', 'bez', 'trzeba', 'jedno', 'jest', 'skąd', 
+'jakie', 'gdy', 'ii', 'nr', 'ono', 'choć', 'ciebie', 'nowe', 'którego', 'również', 'xv', 'naszego', 'twój', 'być', 
+'oni', 'tys', 'pl', 'przez', 'nią', 'niego', 'jakichś', 'żaden', 'więcej', 'iv', 'gdyby', 'bardziej', 'mało', 
+'wszystko', 'u', 'o.o.', 'wam', 'aż', 'www', 'bynajmniej', 'jej', 'nasz', 'twoim', 'jemu', 'oto', 'niż', 'sposób', 
+'żadnych', 'przy', 'gdzie', 'kierunku', 'bym', 'ku', 'nasza', 'jakaś', 'jakkolwiek', 'iż', 'mają', 'jego', 'natomiast', 
+'żeby', 'aby', 'cali', 'czyli', 'i', 'aj', 'cię', 'ty', 'dwie', 'temu', 'został', 'podczas', 'dziś', 'a', 'moim', 'raz', 
+'tam', 'xiii', 'mimo', 'jeśli', 'twoje', 'vii', 'nas', 'ich', 'ależ', 'żadna', 'lub', 'jedna', 'iii', 'sama', 'jednym', 
+'dlaczego', 'mój', 'tzw', 'kiedy', 'ci', 'była', 'was', 'ona', 'mu', 'mną', 'cała', 'czasami', 'dzisiaj', 'każdy', 'nami', 
+'obok', 'mi', 'miał', 'powinni', 'pomimo', 'wie', 'często', 'znów', 'cały', 'mamy', 'bardzo', 'do', 'jak', 'był', 'wami', 
+'on', 'przede', 'zapewne', 'jednakże', 'tego', 'wszystkim', 'którzy', 'dobrze', 'jakiś', 'tym', 'pana', 'kto', 'swoje', 
+'moi', 'wy', 'lecz', 'dla', 'nie', 'nic', 'sam', 'przed', 'nimi', 'dlatego', 'wszystkie', 'będą', 'tę', 'których', 'nad', 
+'poza', 'tak', 'żadne', 'jaki', 'ten', 'z', 'musi', 'po', 'owszem', 'sobą', 'ponad', 'nim', 'dr', 'aczkolwiek', 'jednak', 
+'zeznowu', 'która', 'viii', 'daleko', 'chce', 'gdziekolwiek', 'powinno', 'mnie', 'innych', 'że', 'naszych', 'dużo', 'np', 
+'teraz'}
+>>>
+https://www.geeksforgeeks.org/create-inverted-index-for-file-using-python/
 """
+# To read file:
+# this will open the file
+file = open('file.txt', encoding='utf8')
+read = file.read()
+file.seek(0)
+# read
+
+# to obtain the
+# number of lines
+# in file
+line = 1
+for word in read:
+    if word == '\n':
+        line += 1
+print("Number of lines in file is: ", line)
+
+# create a list to
+# store each line as
+# an element of list
+array = []
+for i in range(line):
+    array.append(file.readline())
+
+# array
+
+# Remove punctuation:
+punc = '''!()-[]{};:'"\, <>./?@#$%^&*_~'''
+for ele in read:
+    if ele in punc:
+        read = read.replace(ele, " ")
+
+# read
+
+# to maintain uniformity
+read = read.lower()
+# read
+
+"""
+Tokenize the data as individual words:
+Apply linguistic preprocessing by converting each words in the sentences into tokens. 
+Tokenizing the sentences help with creating the terms for the upcoming indexing operation. 
+"""
+
+
+def tokenize_words(file_contents):
+    """
+    Tokenizes the file contents.
+
+    Parameters
+    ----------
+    file_contents : list
+        A list of strings containing the contents of the file.
+
+    Returns
+    -------
+    list
+        A list of strings containing the contents of the file tokenized.
+
+    """
+    result = []
+
+    for i in range(len(file_contents)):
+        tokenized = []
+
+        # print("The row is ", file_contents[i])
+
+        # split the line by spaces
+        tokenized = file_contents[i].split()
+
+        result.append(tokenized)
+
+    return result
+
+
+"""
+Clean data by removing stopwords: 
+Stop words are those words that have no emotions associated with it and can safely be ignored without sacrificing 
+the meaning of the sentence.
+"""
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+nltk.download('stopwords')
+
+for i in range(1):
+    # this will convert
+    # the word into tokens
+    text_tokens = word_tokenize(read)
+
+tokens_without_sw = [
+    word for word in text_tokens if not word in stopwords.words()]
+
+print(tokens_without_sw)
+
+# Create an inverted index:
+ii_dict = {}
+
+for i in range(line):
+    check = array[i].lower()
+    for item in tokens_without_sw:
+
+        if item in check:
+            if item not in ii_dict:
+                ii_dict[item] = []
+
+            if item in ii_dict:
+                ii_dict[item].append(i + 1)
+
+print(ii_dict)
