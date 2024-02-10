@@ -1,4 +1,7 @@
 '''
+title: spidering_basics_2.py
+coding=utf-8
+author: Andrzej Kryński
 Wątki przez nadpisanie klasy Thread modułu threads.
 '''
 import requests
@@ -180,8 +183,10 @@ def worker1(_soup):
         print("exit flag set - exiting worker1")
 
 
+# region worker2
 def worker2(_sesja, _link):
     pass
+# endregion
 
 
 
@@ -216,6 +221,7 @@ class Worker1Thread(threading.Thread):
         print(f"Exiting Worker1Thread")
 
 
+# region worker2
 class Worker2Thread(threading.Thread):
     def __init__(self, queue):
         # If the subclass overrides the constructor, it must make sure to invoke the base class constructor
@@ -235,6 +241,7 @@ class Worker2Thread(threading.Thread):
                 self.queue.task_done()
                 print("Worker2Thread done\n")
         print("Exiting WOrker2Thread")
+# endregion
 
 
 strona = "https://akrynski.pythonanywhere.com/"

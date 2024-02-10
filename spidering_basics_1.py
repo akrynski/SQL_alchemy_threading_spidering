@@ -1,7 +1,9 @@
-# title: spydering basics
 '''
-kolejna kopia
+title: spidering_basics_1.py
+coding=utf-8
+author: Andrzej Kryński
 '''
+# region Image1
 import tkinter as tk
 
 from PIL import Image, ImageTk
@@ -22,6 +24,7 @@ label.pack()
 
 # Run the Tkinter event loop
 root.mainloop()
+# endregion
 """
 Podstawowe pojęcia wyszukiwania informacji
 Wyszukiwanie informacji (IR) to badanie pomagające użytkownikom znaleźć informacje, 
@@ -37,6 +40,7 @@ Uszeregowane dokumenty są następnie prezentowane użytkownikowi.
 Kolekcja dokumentów jest również nazywana tekstową bazą danych, 
 która jest indeksowana przez indeksator w celu wydajnego pobierania.
 """
+# region image2
 image_path = "images/WebCrawlerArchitecture.png"
 image = Image.open(image_path)
 
@@ -52,6 +56,7 @@ label.pack()
 
 # Run the Tkinter event loop
 root.mainloop()
+# endregion
 """
 Wielozadaniowość modułu pobierania realizuję przy użyciu klasy threads.Thread, której argumentami są WORKER, 
 czyli procedura zdejmująca dane z kolejki i przekazująca je do bazy danych, oraz klasa queue.QUEUE - 
@@ -207,6 +212,6 @@ J a k i ś   n a p i s
 J a k i ś   n a p i s
 J a k i ś   n a p i s
 
-Innym sposobem odpalania wątku jest nadpisanie metody w podklasie.
+Innym sposobem uruchomiania wątku jest nadpisanie metody w podklasie.
 Opisuję to w pliku spidering_basics_2.py
 """
