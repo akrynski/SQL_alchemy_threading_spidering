@@ -27,8 +27,8 @@ root.mainloop()
 # endregion
 """
 Podstawowe pojęcia wyszukiwania informacji
-Wyszukiwanie informacji (IR) to badanie pomagające użytkownikom znaleźć informacje, 
-które odpowiadają ich potrzebom informacyjnym. 
+Wyszukiwanie informacji (IR) to badanie pomagające użytkownikom znaleźć informacje, które odpowiadają 
+ich potrzebom informacyjnym. 
 Technicznie rzecz biorąc, IR bada pozyskiwanie, organizację, przechowywanie, wyszukiwanie i dystrybucję informacji. 
 Historycznie rzecz biorąc, IR polega na wyszukiwaniu dokumentów, kładąc nacisk na dokument jako podstawową jednostkę. 
 Użytkownik posiadający informacje musi wysłać zapytanie (zapytanie użytkownika) do systemu pobierania 
@@ -89,7 +89,7 @@ db_password = os.environ.get("POSTGRES_PASSWORD")
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 # Tworzenie bazy danych PostgreSQL z użyciem hasła z zmiennych środowiskowych
-DATABASE_URL = f"postgresql://postgres:{db_password}@localhost:5432/pierwsze_kroki"
+DATABASE_URL = f"postgresql://Andrzej:{db_password}@localhost:5432/pierwsze_kroki"  #5432
 # Opcja -c client_encoding=utf8 jawnie ustawia kodowanie klienta na UTF-8
 # Możesz sprawdzić plik konfiguracyjny serwera PostgreSQL (zwykle o nazwie postgresql.conf)
 # pod kątem client_encoding = utf8
@@ -144,7 +144,7 @@ def worker(_queue):
 # Funkcja do pobierania danych z zewnętrznego źródła
 def fetch_data():
     # Pobieranie danych
-    response = requests.get("https://akrynski.pythonanywhere.com/")
+    response = requests.get("https://blogonasladowca-akrynski.pythonanywhere.com/")
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
         html_content = response.text
@@ -154,11 +154,13 @@ def fetch_data():
         links = soup.find_all("div", class_="post")
         for link in links:
             print("Link:", link)
+
+        # W rozwinięciu funkcja zwraca tylko znalezione artykuły
+        # ale dla uproszczenia kodu zwracam tu całą zawartość tekstową witryny
+        return soup.text
     else:
-        print("Error: {response.status_code}")
-    # W rozwinięciu funkcja zwraca tylko znalezione artykuły
-    # ale dla uproszczenia kodu zwracam tu całą zawartość tekstową witryny
-    return soup.text
+        print(f"Error: {response.status_code}")
+    return
 
 
 # Tworzenie kolejki i wątków

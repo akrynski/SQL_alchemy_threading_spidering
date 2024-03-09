@@ -7,7 +7,7 @@ Więcej o wyszukiwaniu informacji (IR, text-mining, web-scraping)
 '''
 
 """
-Wyszukiwanie informacji to zwyczajnie znalezienie zestawu dokumentów, które są istotne dla zapytania użytkownika. 
+Wyszukiwanie informacji (IR) to zwyczajnie znalezienie zestawu dokumentów, które są istotne dla zapytania użytkownika. 
 Klasyfikacja takiego zestawu dokumentów jest zwykle wykonywana również zgodnie z ich ocenami trafności dla zapytania. 
 Najczęściej używanym formatem zapytania jest lista słów kluczowych, które są również nazywane terminami. 
 IR różni się od pobierania danych w bazach danych przy użyciu zapytań SQL, ponieważ dane w bazach danych są wysoce 
@@ -28,7 +28,7 @@ Terminy w wyszukiwaniu możemy powiązać ze sobą w następujące sposoby:
 Zanim dokumenty w kolekcji zostaną użyte do pobrania, zwykle wykonywane są pewne zadania przetwarzania wstępnego. 
 W przypadku tradycyjnych dokumentów tekstowych (bez znaczników HTML) zadania obejmują usuwanie stopwordów 
 (spójniki, partykuły i inne), stemming i obsługę cyfr, łączników, znaków interpunkcyjnych i wielkości liter. 
-W przypadku stron sieci Web dodatkowe zadania, takie jak usuwanie znaczników HTML i identyfikacja głównych 
+W przypadku stron sieci Web mamy dodatkowe zadania, takie jak usuwanie znaczników HTML i identyfikacja głównych 
 bloków zawartości. Tutaj mamy do dyspozycji dość szeroką gamę modółów, łącznie z flagowym BeatifulSoup.
     Usuwanie stopwordów, cyfr, łączników czy znaków interpunkcyjnych to błahostka możliwa do przeprowadzenia za pomocą
 podstawowych funkcji języka bądż z pomocą modułu wyrażeń regularnych re.
@@ -80,8 +80,8 @@ Ocena merytoryczna opiera się na dwóch rodzajach informacji:
 Do obliczenia wyniku opartego na treści (zwanego także wynikiem IR) każdemu typowi wystąpienia przypisano odpowiednią wagę. 
 Wszystkie wagi typów tworzą stały wektor. Każda liczba surowych terminów jest konwertowana na wagę zliczeń, 
 a wszystkie wagi zliczeń również tworzą wektor.
-Przyjrzyjmy się teraz dwóm rodzajom zapytań: zapytaniom jednowyrazowym i zapytaniom wielowyrazowym. Z
-apytanie jednowyrazowe to najprostszy przypadek zawierający tylko jeden termin. Po uzyskaniu stron zawierających termin 
+Przyjrzyjmy się teraz dwóm rodzajom zapytań: zapytaniom jednowyrazowym i zapytaniom wielowyrazowym. 
+Zapytanie jednowyrazowe to najprostszy przypadek zawierający tylko jeden termin. Po uzyskaniu stron zawierających termin 
 z odwróconego indeksu obliczamy iloczyn skalarny wektora wagi typu i wektora wagi zliczania każdej strony, 
 co daje nam wynik IR strony. Wynik IR każdej strony jest następnie łączony z jej wynikiem reputacji, 
 aby uzyskać ostateczny wynik strony. W przypadku zapytania składającego się z wielu słów sytuacja jest podobna, 

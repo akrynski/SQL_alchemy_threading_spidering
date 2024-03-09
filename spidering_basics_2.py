@@ -61,7 +61,7 @@ db_password = os.environ.get("POSTGRES_PASSWORD")
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 # Tworzenie bazy danych PostgreSQL z użyciem hasła z zmiennych środowiskowych
-DATABASE_URL = f"postgresql://postgres:{db_password}@localhost:5432/moje_strony"
+DATABASE_URL = f"postgresql://Andrzej:{db_password}@localhost:5432/moje_strony"
 # Opcja -c client_encoding=utf8 jawnie ustawia kodowanie klienta na UTF-8
 # Możesz sprawdzić plik konfiguracyjny serwera PostgreSQL (zwykle o nazwie postgresql.conf)
 # pod kątem client_encoding = utf8
@@ -155,8 +155,8 @@ def worker1(_soup):
         links = _soup.find_all("div", class_="post")
         for link in links:
             # print({link.get('href')})
-            _title = link.find('h1').text.strip()
-            #print(title, '\n')
+            _title = link.find('h3').text.strip() #UWAGA!!! wcześniej było h1 i zwracało błąd, że brak metody .text() ;)
+            print(_title, '\n')
             paragraf = link.find('p').text.strip()
             _checksum = generate_hash(paragraf)
             # print(paragraf, "\n")
@@ -244,7 +244,7 @@ class Worker2Thread(threading.Thread):
 # endregion
 
 
-strona = "https://akrynski.pythonanywhere.com/"
+strona = "https://blogonasladowca-akrynski.pythonanywhere.com/blog/"
 soup = getSoup(requests_session, strona)
 queue1 = Queue()
 # Create 8 worker threads
