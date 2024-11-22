@@ -21,7 +21,7 @@ else:
 
 class InvertedIndex:
     def __init__(self, doc, _stopwords, _tokenizer):
-        self.doc = doc
+        self.doc = doc.lower()
         self.lines = 1
         self.arr = []
         self.tokenizer = _tokenizer
@@ -72,7 +72,7 @@ class InvertedIndex:
         # Remove stopring words
         after_stopping = [token for token in tokens if token not in stop_words] # było in NewList
         # print(f"after stopping list:\n{after_stopping}")
-        punc = '''!()-[]{};:'"\, <>./?@#$%^&*_~'''
+        punc = '''!()-[]{};:'"\, <>./?@#$%^&*_~„[^\w\s]+'''
         newstr = []
         for ele in after_stopping:
             if ele not in punc:
