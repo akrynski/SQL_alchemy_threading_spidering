@@ -3,7 +3,7 @@ title: spidering_basics_3.py
 coding=utf-8
 author: Andrzej Kryński
 Niektóre przykłady pochodzą z https://www.geeksforgeeks.org/create-inverted-index-for-file-using-python/
-Więcej o wyszukiwaniu informacji (IR, text-mining, web-scraping)
+Więcej o wyszukiwaniu informacji (IR, text-mining, web-scraping).
 '''
 
 """
