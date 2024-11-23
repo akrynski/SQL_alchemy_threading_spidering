@@ -133,7 +133,7 @@ https://www.geeksforgeeks.org/create-inverted-index-for-file-using-python/
 """
 # To read file:
 # this will open the file
-file = open('file.txt', encoding='utf8')
+file = open('.\\text\\Documents.txt', encoding='utf8')
 read = file.read()
 file.seek(0)
 # read
@@ -157,7 +157,7 @@ for i in range(line):
 # array
 
 # Remove punctuation:
-punc = '''!()-[]{};:'"\, <>./?@#$%^&*_~'''
+punc = '''!()-[]{};:'"\\, <>./?@#$%^&*_~'''  # pierwotnie nie było \\ tylko \
 for ele in read:
     if ele in punc:
         read = read.replace(ele, " ")
@@ -211,10 +211,12 @@ Stop words are those words that have no emotions associated with it and can safe
 the meaning of the sentence.
 """
 import nltk
+# nltk.download()
+#nltk.download('pl196x')  # 'stopwords'
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-nltk.download('stopwords')
+
 
 for i in range(1):
     # this will convert
@@ -224,6 +226,7 @@ for i in range(1):
 tokens_without_sw = [
     word for word in text_tokens if not word in stopwords.words()]
 
+print("Tokens without stopwords: ")
 print(tokens_without_sw)
 
 # Create an inverted index:
